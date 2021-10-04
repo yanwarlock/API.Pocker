@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>SignalR Client</title>
+</head>
+
+<body>
+    <div id="logger">
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://www.unpkg.com/@aspnet/signalr@1.0.27/dist/browser/signalr.js"></script>
+
+    <script>
+        "use strict";
+
+        $(document).ready(function () {
+            var $log = $("#logger");
+
+            var connection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/hubs/votes").build();
+
+            connection.on("AllVotes", function (votes) {
+                console.log(votes);
+                $log.append("<p>All Votes:</p>");
+                votes.forEach(v => {
+                    $log.append("<p>"+v.id+"</p>");
+                });
+            });
+
+            $log.append("<p>Connecting...</p>");
+            connection.start().then(function () {
+                $log.append("<p>Connected</p>");
+            }).catch(function (err) {
+                $log.append("<p>Error: " + err.toString() + "</p>");
+                return console.error(err.toString());
+            });
+        });
+    </script>
+</body>
+
+</html>
