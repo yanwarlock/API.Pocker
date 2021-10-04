@@ -90,5 +90,23 @@ namespace API.Pocker.Services
                 Data = result
             };
         }
+
+        public async Task<ResponseAPI<UserProfileModel>> GetAsync(string request)
+        {
+            var result = await _dbContext.UserProfiles.ProjectTo<UserProfileModel>(_mapper.ConfigurationProvider)
+                 .FirstOrDefaultAsync(c => c.Id == request);
+            if (result is null)
+                return new ResponseAPI<UserProfileModel>()
+                {
+                    Succeeded = false,
+                    Message = "Get Fail",
+                };
+            return new ResponseAPI<UserProfileModel>()
+            {
+                Succeeded = true,
+                Message = "Get Success",
+                Data = result
+            };
+        }
     }
 }

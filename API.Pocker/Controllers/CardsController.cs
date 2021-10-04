@@ -20,7 +20,6 @@ namespace API.Pocker.Controllers
     [Authorize]
     public class CardsController : ControllerBase
     {
-
         private readonly ICardsService _cardsService;
        public CardsController(CardsService cardsService)
         {
@@ -47,7 +46,6 @@ namespace API.Pocker.Controllers
          }
 
         [HttpGet("GetCards")]
-        [HttpGet("{id:required}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Get(string request)
@@ -59,7 +57,6 @@ namespace API.Pocker.Controllers
         }
 
         [HttpDelete("DeleteCards")]
-        [HttpDelete("{id:required}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Delete(string request)

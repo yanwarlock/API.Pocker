@@ -52,28 +52,46 @@ namespace API.Pocker.Controllers
 
 
         [HttpPost("CreateAccount")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ResponseAPI<AccountModel>> CreateAccount(CreateAccountRequest request)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> CreateAccount(CreateAccountRequest request)
         {
-            var service = Request.HttpContext.RequestServices.GetService<ManageAccountService>();
-            var response = await service.CreateAsync(request);
-            return response;
+            try
+            {
+                if (request is null)
+                    return BadRequest();
+                var result = await _manageAccountService.CreateAsync(request);
+                return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { StatusCodes.Status409Conflict, ex.Message });
+            }
         }
-        [HttpDelete("DeleteAccount")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ResponseAPI<AccountModel>> DeleteAccount(string request)
-        {
-            var service = Request.HttpContext.RequestServices.GetService<ManageAccountService>();
-            var response = await service.DeleteAsync(request);
-            return response;
-        }
-
+       
         [HttpPost("refresh_token")]
-        public async Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string refresh_token)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> RefreshToken(string refresh_token)
         {
-            var service = Request.HttpContext.RequestServices.GetService<ManageAccountService>();
-            var response = await service.RefreshToken(refresh_token);
-            return response;
+            try
+            {
+                if (refresh_token is null)
+                    return BadRequest();
+                var result = await _manageAccountService.RefreshToken(refresh_token);
+                if(result.Errors != null)
+                    return BadRequest(
+                    new { StatusCodes.Status401Unauthorized, result.Errors });
+
+                return CreatedAtAction(nameof(Get), new { id = result.Data.AccessToken }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { StatusCodes.Status409Conflict, ex.Message });
+            }
         }
     }
 }

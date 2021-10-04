@@ -11,8 +11,6 @@ namespace API.Pocker.Data.Entities.ManagerUser
         public string Id { get; set; }
         public string Value { get; set; }
         public string AccountId { get; set; }
-        public DateTime Create { get; set; }
-        public DateTime Expires { get; set; }
         public RefreshToken()
         {
             Id = GenerateBy.GenerateByUid();

@@ -19,10 +19,6 @@ namespace API.Pocker.Data.Configurations.ManagerUser
             builder.Property(t => t.Value);
 
             builder.Property(t => t.AccountId);
-
-            builder.Property(t => t.Create);
-
-            builder.Property(t => t.Expires);
         }
     }
 }

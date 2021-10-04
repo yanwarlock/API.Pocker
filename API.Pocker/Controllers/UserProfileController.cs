@@ -9,6 +9,8 @@ using API.Pocker.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using API.Pocker.Services.Interfaces;
+using System.Net.Mime;
 
 namespace API.Pocker.Controllers
 {
@@ -17,17 +19,44 @@ namespace API.Pocker.Controllers
   
     public class UserProfileController : ControllerBase
     {
-        public UserProfileController()
+        private readonly IUserProfileService _userProfileService;
+        public UserProfileController(UserProfileService userProfileService)
         {
-
+            _userProfileService = userProfileService;
         }
         [HttpPost("CreateUserProfile")]
-        public async Task<ResponseAPI<UserProfileModel>> CreateUserProfile(UserProfileRequest request)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> CreateUserProfile(UserProfileRequest request)
         {
-            var service = Request.HttpContext.RequestServices.GetService<UserProfileService>();
-            var response = await service!.CreateAsync(request);
-            return response;
+            try
+            {
+                if (request is null)
+                    return BadRequest();
+                var result = await _userProfileService.CreateAsync(request);
+                if(!result.Succeeded)
+                    return BadRequest(new { StatusCodes.Status409Conflict, result.Message});
+                return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { StatusCodes.Status409Conflict, ex.Message });
+            }
         }
+
+        [HttpGet("UserProfile")]
+        [HttpGet("{id:required}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Get(string request)
+        {
+            var result = await _userProfileService.GetAsync(request);
+            if (result.Data is null)
+                return NotFound(result);
+            return Ok(result);
+        }
+
         [HttpDelete("DeleteUserProfile")]
         [Authorize(Roles = "Admin")]
         public async Task<ResponseAPI> DeleteUserProfile(string request)

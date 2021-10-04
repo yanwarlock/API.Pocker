@@ -79,7 +79,6 @@ namespace API.Pocker.Services.ManageAccounts
                 UserName = user.UserName,
                 Created = DateTime.UtcNow,
             };
-             _applicationDbContext.RefreshToken.Remove(_applicationDbContext.RefreshToken.FirstOrDefault());
 
             var rolList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             var accountNewRefreshToken = await _applicationDbContext.RefreshToken
@@ -96,6 +95,12 @@ namespace API.Pocker.Services.ManageAccounts
                 });
                 await _applicationDbContext.SaveChangesAsync();
                 response.RefreshToken = generateRefreshToken;
+                response.Role = rolList.ToList();
+                return new ResponseAPI<AuthenticationModel>(response)
+                {
+                    Succeeded = true,
+                    Message = "Authentication Success",
+                };
             }
             response.Role = rolList.ToList();
             response.RefreshToken = new RefreshTokenModel
