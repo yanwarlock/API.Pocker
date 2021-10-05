@@ -56,5 +56,22 @@ namespace API.Pocker.Services
             };
         }
 
+        public async Task<ResponseAPI<UserHistoryModel>> GetAsyn(string id)
+        {
+            var result = await _dbContext.UserProfileHistorys.ProjectTo<UserHistoryModel>(_mapper.ConfigurationProvider)
+                 .FirstOrDefaultAsync(c => c.Id == id);
+            if (result is null)
+                return new ResponseAPI<UserHistoryModel>()
+                {
+                    Succeeded = false,
+                    Message = "Get Fail",
+                };
+            return new ResponseAPI<UserHistoryModel>()
+            {
+                Succeeded = true,
+                Message = "Get Success",
+                Data = result
+            };
+        }
     }
 }

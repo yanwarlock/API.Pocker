@@ -13,5 +13,6 @@ namespace API.Pocker.Services.Interfaces
         Task<ResponseAPI<VotesModel>> CreateAsync(VotesRequest request);
         Task<ResponseAPI> DeleteAsync(string id);
         Task<ResponseAPI<IList<VotesModel>>> GetAllAsync();
+        Task<ResponseAPI<VotesModel>> GetAsync(string id);
     }
 }

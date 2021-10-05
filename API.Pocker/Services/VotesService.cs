@@ -89,5 +89,23 @@ namespace API.Pocker.Services
                 Data = result
             };
         }
+
+        public async Task<ResponseAPI<VotesModel>> GetAsync(string id)
+        {
+            var result = await _dbContext.Cards.ProjectTo<VotesModel>(_mapper.ConfigurationProvider)
+                  .FirstOrDefaultAsync(c => c.Id == id);
+            if (result is null)
+                return new ResponseAPI<VotesModel>()
+                {
+                    Succeeded = false,
+                    Message = "Get Fail",
+                };
+            return new ResponseAPI<VotesModel>()
+            {
+                Succeeded = true,
+                Message = "Get Success",
+                Data = result
+            };
+        }
     }
 }

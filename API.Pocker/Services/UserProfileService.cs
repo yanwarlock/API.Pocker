@@ -1,6 +1,7 @@
 ﻿using API.Pocker.Data;
 using API.Pocker.Data.Entities;
 using API.Pocker.Models;
+using API.Pocker.Models.ManageAccounts;
 using API.Pocker.Models.User;
 using API.Pocker.Services.Interfaces;
 using API.Pocker.Services.ManageAccounts;
@@ -46,9 +47,10 @@ namespace API.Pocker.Services
             {
                 Name = request.Name,
                 IdUserIdentity = accountData.Data.Id,
+
             };
 
-            await _dbContext.UserProfiles.AddRangeAsync(userProfile);
+            await _dbContext.UserProfiles.AddAsync(userProfile);
             await _dbContext.SaveChangesAsync();
 
             var result = _mapper.Map<UserProfileModel>(userProfile);
@@ -81,8 +83,24 @@ namespace API.Pocker.Services
 
         public async Task<ResponseAPI<IList<UserProfileModel>>> GetAllAsync()
         {
-            var result = await _dbContext.UserProfiles.ProjectTo<UserProfileModel>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var userProfiles = await _dbContext.UserProfiles.ToListAsync();
+            var result = new List<UserProfileModel>();
+            foreach (var profile in userProfiles)
+            {
+                var account = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == profile.IdUserIdentity);
+                var rols = await _manageAccountService.GetRolsAccountAsync(account.Id).ConfigureAwait(false);
+                result.Add(new UserProfileModel
+                {
+                    Id = profile.Id,
+                    Name = profile.Name,
+                    Account = new AccountModel
+                    {
+                        Email = account.Email,
+                        Id = account.Id,
+                        Role = rols.Data,
+                    },
+                });
+            }
             return new ResponseAPI<IList<UserProfileModel>>()
             {
                 Succeeded = true,

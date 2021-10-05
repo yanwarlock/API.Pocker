@@ -13,5 +13,6 @@ namespace API.Pocker.Services.ManageAccounts
         Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest model);
         Task<ResponseAPI<AccountModel>> GetAccountAsync(string id);
         Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string model);
+        Task<ResponseAPI<IList<string>>> GetRolsAccountAsync(string model);
     }
 }

@@ -28,7 +28,7 @@ namespace API.Pocker.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateUserProfile(UserProfileRequest request)
+        public async Task<ActionResult> Post(UserProfileRequest request)
         {
             try
             {
@@ -46,7 +46,6 @@ namespace API.Pocker.Controllers
         }
 
         [HttpGet("UserProfile")]
-        [HttpGet("{id:required}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Get(string request)
@@ -59,19 +58,27 @@ namespace API.Pocker.Controllers
 
         [HttpDelete("DeleteUserProfile")]
         [Authorize(Roles = "Admin")]
-        public async Task<ResponseAPI> DeleteUserProfile(string request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Delete(string request)
         {
-            var service = Request.HttpContext.RequestServices.GetService<UserProfileService>();
-            var response = await service!.DeleteAsync(request);
-            return response;
+            var result = await _userProfileService.DeleteAsync(request);
+            if (!result.Succeeded)
+                return NotFound(result);
+            return Ok(result);
         }
+
         [HttpGet("GetAllUserProfile")]
         [Authorize]
-        public async Task<ResponseAPI<IList<UserProfileModel>>> GetAllUserProfile()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> Get()
         {
-            var service = Request.HttpContext.RequestServices.GetService<UserProfileService>();
-            var response = await service!.GetAllAsync();
-            return response;
+            var result = await _userProfileService.GetAllAsync();
+            if (result.Data is null)
+                return NotFound(result);
+            return Ok(result);
+
         }
     }
 }

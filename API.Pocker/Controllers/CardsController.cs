@@ -65,7 +65,6 @@ namespace API.Pocker.Controllers
             if (!result.Succeeded)
                 return NotFound(result);
             return Ok(result);
-
         }
 
         [HttpGet("GetAllCards")]

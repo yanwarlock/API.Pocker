@@ -246,9 +246,16 @@ namespace API.Pocker.Services.ManageAccounts
             throw new NotImplementedException();
         }
 
-        public Task<ResponseAPI<IList<string>>> GetRolsAccountAsync(string id)
+        public async Task<ResponseAPI<IList<string>>> GetRolsAccountAsync(string id)
         {
-            throw new NotImplementedException();
+            var result = await _userManager.GetRolesAsync(await _applicationDbContext.Users.FirstOrDefaultAsync(u => u.Id == id));
+            return new ResponseAPI<IList<string>>()
+            {
+                Succeeded = true,
+                Message = "GetRolsAccount Success",
+                Data = result,
+                
+            };
         }
 
         public async Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string model)
@@ -274,6 +281,11 @@ namespace API.Pocker.Services.ManageAccounts
                 Succeeded = true,
                 Message = "RefreshToken Success",
             };
+        }
+
+        public Task<ResponseAPI<IList<string>>> GetRols(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
