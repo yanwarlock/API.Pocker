@@ -32,6 +32,13 @@ namespace API.Pocker.Controllers
             _userHistoryService = userHistoryService;
         }
 
+
+        /// <summary>
+        /// Crea una new Cards
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>retorna una Cards</returns>
+
         [HttpPost("CreateCards")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]

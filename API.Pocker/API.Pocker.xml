@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>API.Pocker</name>
+    </assembly>
+    <members>
+        <member name="M:API.Pocker.Controllers.CardsController.Post(API.Pocker.Models.Cards.CardsRequest)">
+            <summary>
+            Crea una new Cards
+            </summary>
+            <param name="request"></param>
+            <returns>retorna una Cards</returns>
+        </member>
+    </members>
+</doc>
