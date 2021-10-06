@@ -18,8 +18,9 @@ namespace API.Pocker.xUnitTest.ControllerTest
         {
             var db = ServicesFactory.CreateDb();
             var mapper = ServicesFactory.CreateMapper();
-            var service = new CardsService(db, mapper);
-            var controller = new CardsController(service);
+            var serviceCards = new CardsService(db, mapper);
+            var serviceuserHistory = new UserHistoryService(db, mapper);
+            var controller = new CardsController(serviceCards,serviceuserHistory);
 
             var request = new CardsRequest
             {
@@ -35,8 +36,9 @@ namespace API.Pocker.xUnitTest.ControllerTest
         {
             var db = ServicesFactory.CreateDb();
             var mapper = ServicesFactory.CreateMapper();
-            var service = new CardsService(db, mapper);
-            var controller = new CardsController(service);
+            var serviceCards = new CardsService(db, mapper);
+            var serviceuserHistory = new UserHistoryService(db, mapper);
+            var controller = new CardsController(serviceCards, serviceuserHistory);
 
             var request = new CardsRequest
             {
@@ -53,14 +55,15 @@ namespace API.Pocker.xUnitTest.ControllerTest
         {
             var db = ServicesFactory.CreateDb();
             var mapper = ServicesFactory.CreateMapper();
-            var service = new CardsService(db, mapper);
-            var controller = new CardsController(service);
+            var serviceCards = new CardsService(db, mapper);
+            var serviceuserHistory = new UserHistoryService(db, mapper);
+            var controller = new CardsController(serviceCards, serviceuserHistory);
 
             var request = new CardsRequest
             {
                 Value = 112233,
             };
-            var responseCreate = await service.CreateAsync(request);
+            var responseCreate = await serviceCards.CreateAsync(request);
 
             var responseGet = await controller.Get(responseCreate.Data.Id);
             var responceDelete = await controller.Delete(responseCreate.Data.Id);

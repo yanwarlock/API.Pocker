@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Pocker.Extensions;
 
 namespace API.Pocker.Services
 {
@@ -31,11 +32,20 @@ namespace API.Pocker.Services
                     Succeeded = false,
                     Message = "Create fail",
                 };
+
             var newHistory = _mapper.Map<UserProfileHistory>(request);
+            newHistory.UserProfileId = request.Email;
+
+            var userIndentity = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var userProfile = await _dbContext.UserProfiles.FirstOrDefaultAsync(u => u.UserIdentityId == userIndentity.Id);
+
+            newHistory.UserProfileId = userProfile.Id;
             await _dbContext.UserProfileHistorys.AddRangeAsync(newHistory);
             await _dbContext.SaveChangesAsync();
 
             var resul = _mapper.Map<UserHistoryModel>(newHistory);
+            resul.UserName = userIndentity.UserName;
+
             return new ResponseAPI<UserHistoryModel>()
             {
                 Succeeded = true,

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using API.Pocker.Extensions;
 using API.Pocker.Hubs;
 using API.Pocker.Models;
+using API.Pocker.Models.User;
 using API.Pocker.Models.Votes;
 using API.Pocker.Services;
 using API.Pocker.Services.Interfaces;
@@ -23,10 +25,13 @@ namespace API.Pocker.Controllers
     public class VotesController : ControllerBase
     {
         private readonly IVotesService _votesService;
-        public VotesController(VotesService votesService)
+        private readonly IUserHistoryService _userHistoryService;
+        public VotesController(VotesService votesService, UserHistoryService userHistoryService)
         {
             _votesService = votesService;
+            _userHistoryService = userHistoryService;
         }
+        
         [HttpPost("CreateVotes")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -40,16 +45,26 @@ namespace API.Pocker.Controllers
 
                 var result = await _votesService.CreateAsync(request);
 
-                var serviceRabbitMq = Request.HttpContext.RequestServices.GetService<AmqpService>();
-                serviceRabbitMq.PublishMessage(result);
+                if (result.Succeeded)
+                {
+                    var serviceRabbitMq = Request.HttpContext.RequestServices.GetService<AmqpService>();
+                    serviceRabbitMq.PublishMessage(result);
 
+                    var responseVotes = await _votesService!.GetAllAsync();
 
-                var responseVotes = await _votesService!.GetAllAsync();
+                    var hubContext = Request.HttpContext.RequestServices.GetService<IHubContext<VotesHub>>();
+                    await hubContext.SendAllVotes(responseVotes.Data);
 
-                var hubContext = Request.HttpContext.RequestServices.GetService<IHubContext<VotesHub>>();
-                await hubContext.SendAllVotes(responseVotes.Data);
-
-                return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
+                    await _userHistoryService.CreateAsync(new UserHistoryRequest
+                    {
+                        Email = User.GetUserEmail(),
+                        Description = $"Create Votes by Id: {result.Data.Id}"
+                    });
+                    return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
+                }else
+                {
+                    return BadRequest(result);
+                }      
             }
             catch (Exception ex)
             {
@@ -65,6 +80,12 @@ namespace API.Pocker.Controllers
             var result = await _votesService.GetAsync(request);
             if (result.Data is null)
                 return NotFound(result);
+
+            await _userHistoryService.CreateAsync(new UserHistoryRequest
+            {
+                Email = User.GetUserEmail(),
+                Description = $"Get Votes by Id: {result.Data.Id}"
+            });
             return Ok(result);
         }
 
@@ -76,6 +97,12 @@ namespace API.Pocker.Controllers
             var result = await _votesService.DeleteAsync(request);
             if (!result.Succeeded)
                 return NotFound(result);
+
+            await _userHistoryService.CreateAsync(new UserHistoryRequest
+            {
+                Email = User.GetUserEmail(),
+                Description = $"Delete Votes"
+            });
             return Ok(result);
         }
         [HttpGet("GetAllVotes")]
@@ -86,6 +113,11 @@ namespace API.Pocker.Controllers
             var result = await _votesService.GetAllAsync();
             if (result.Data is null)
                 return NotFound(result);
+            await _userHistoryService.CreateAsync(new UserHistoryRequest
+            {
+                Email = User.GetUserEmail(),
+                Description = $"Get All Votes"
+            });
             return Ok(result);
         }
 

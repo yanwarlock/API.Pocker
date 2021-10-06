@@ -14,7 +14,12 @@ namespace API.Pocker.Data.Configurations
 
             builder.Property(t => t.Name);
 
-            builder.Property(t => t.IdUserIdentity);      
+            builder.Property(t => t.UserIdentityId);
+
+            builder.HasMany(t => t.UserHistorys)
+                .WithOne(t => t.UserProfile)
+                .HasForeignKey(t => t.UserProfileId);
+
 
         }
     }

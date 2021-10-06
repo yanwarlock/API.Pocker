@@ -36,7 +36,7 @@ namespace API.Pocker.Services
                     Succeeded = false,
                     Message = "Create fail",
                 };
-            var accountData = await _manageAccountService.CreateAsync(request.CreateAccountRequest);
+            var accountData = await _manageAccountService.CreateAsync(request.Account);
             if(!accountData.Succeeded)
                 return new ResponseAPI<UserProfileModel>()
                 {
@@ -46,7 +46,7 @@ namespace API.Pocker.Services
             var userProfile = new UserProfile
             {
                 Name = request.Name,
-                IdUserIdentity = accountData.Data.Id,
+                UserIdentityId = accountData.Data.Id,
 
             };
 
@@ -87,7 +87,7 @@ namespace API.Pocker.Services
             var result = new List<UserProfileModel>();
             foreach (var profile in userProfiles)
             {
-                var account = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == profile.IdUserIdentity);
+                var account = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == profile.UserIdentityId);
                 var rols = await _manageAccountService.GetRolsAccountAsync(account.Id).ConfigureAwait(false);
                 result.Add(new UserProfileModel
                 {

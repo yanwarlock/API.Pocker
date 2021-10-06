@@ -8,13 +8,13 @@ namespace API.Pocker.Data.Entities
     {
         public string Id { get; set; }
         public string Description { get; set; }
-
         public DateTime Date { get; set; }
-
-        // public ICollection<Wishes> Votes { get; set; }
+        public string UserProfileId { get; set; }
+        public UserProfile UserProfile { get; set; }
         public UserProfileHistory()
         {
             Id = GenerateBy.GenerateByUid();
+            Date = DateTime.Now;
         }
     }
 }

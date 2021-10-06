@@ -12,6 +12,10 @@ using API.Pocker.Services.Interfaces;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Security.Principal;
+using System.Security.Claims;
+using API.Pocker.Extensions;
+using API.Pocker.Models.User;
 
 namespace API.Pocker.Controllers
 {
@@ -21,9 +25,11 @@ namespace API.Pocker.Controllers
     public class CardsController : ControllerBase
     {
         private readonly ICardsService _cardsService;
-       public CardsController(CardsService cardsService)
+        private readonly IUserHistoryService _userHistoryService;
+       public CardsController(CardsService cardsService, UserHistoryService userHistoryService)
         {
             _cardsService = cardsService;
+            _userHistoryService = userHistoryService;
         }
 
         [HttpPost("CreateCards")]
@@ -37,12 +43,18 @@ namespace API.Pocker.Controllers
                 if (request is null)
                     return BadRequest();
                 var result = await _cardsService.CreateAsync(request);
+                //var userHistory = await _userHistoryService.CreateAsync(new UserHistoryRequest
+                //{
+                //    Email = User.GetUserEmail(),
+                //    Description = $"Create Cards by Id: {result.Data.Id}"
+                //});
                 return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { StatusCodes.Status409Conflict, ex.Message });
-            }  
+            } 
+            
          }
 
         [HttpGet("GetCards")]
@@ -52,7 +64,14 @@ namespace API.Pocker.Controllers
         {
             var result = await _cardsService.GetAsyn(request);
             if (result.Data is null)
+            {
                 return NotFound(result);
+            }
+            //await _userHistoryService.CreateAsync(new UserHistoryRequest
+            //{
+            //    Email = User.GetUserEmail(),
+            //    Description = $"Get Cards by Id: {result.Data.Id}"
+            //});
             return Ok(result);
         }
 
@@ -64,6 +83,11 @@ namespace API.Pocker.Controllers
             var result = await _cardsService.DeleteAsync(request);
             if (!result.Succeeded)
                 return NotFound(result);
+            //await _userHistoryService.CreateAsync(new UserHistoryRequest
+            //{
+            //    Email = User.GetUserEmail(),
+            //    Description = $"Delete Cards"
+            //});
             return Ok(result);
         }
 
@@ -75,6 +99,12 @@ namespace API.Pocker.Controllers
             var result = await _cardsService.GetAllAsync();
             if (result.Data is null)
                 return NotFound(result);
+
+            //await _userHistoryService.CreateAsync(new UserHistoryRequest
+            //{
+            //    Email = User.GetUserEmail(),
+            //    Description = $"Get All Cards"
+            //});
             return Ok(result);
         }
     }

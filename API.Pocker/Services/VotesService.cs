@@ -1,6 +1,7 @@
 ﻿using API.Pocker.Data;
 using API.Pocker.Data.Entities;
 using API.Pocker.Models;
+using API.Pocker.Models.User;
 using API.Pocker.Models.Votes;
 using API.Pocker.Services.Interfaces;
 using AutoMapper;
@@ -39,7 +40,7 @@ namespace API.Pocker.Services
                 return new ResponseAPI<VotesModel>()
                 {
                     Succeeded = false,
-                    Message = "Create fail : user, card or history no found",
+                    Message = "Create fail : UserId, CardId or UserHistoryId no found",
                 };
 
             var newvotes = new Votes
@@ -52,6 +53,8 @@ namespace API.Pocker.Services
             await _dbContext.SaveChangesAsync();
 
             var result = _mapper.Map<VotesModel>(newvotes);
+            result.UserProfile = _mapper.Map<UserProfileModel>(user);
+            result.UserHistory.UserName = user.Name;
             return new ResponseAPI<VotesModel>()
             {
                 Succeeded = true,

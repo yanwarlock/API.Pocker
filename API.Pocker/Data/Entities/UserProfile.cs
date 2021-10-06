@@ -8,7 +8,9 @@ namespace API.Pocker.Data.Entities
     {
         public string Id { get; set; }
         public  string Name { get; set; }
-        public string IdUserIdentity { get; set; }
+        public IdentityUser UserIdentity { get; set; }
+        public string UserIdentityId { get; set; }
+        public ICollection<UserProfileHistory> UserHistorys { get; set; }
         public UserProfile()
         {
             Id = GenerateBy.GenerateByUid();

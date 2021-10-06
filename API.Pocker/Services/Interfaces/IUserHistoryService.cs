@@ -12,7 +12,6 @@ namespace API.Pocker.Services.Interfaces
     {
         Task<ResponseAPI<UserHistoryModel>> CreateAsync(UserHistoryRequest request);
         Task<ResponseAPI<IList<UserHistoryModel>>> GetAllAsync();
-
         Task<ResponseAPI<UserHistoryModel>> GetAsyn(string id);
     }
 }

@@ -4,6 +4,8 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace API.Pocker.Extensions
@@ -33,6 +35,13 @@ namespace API.Pocker.Extensions
             NullValueHandling = NullValueHandling.Ignore,
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
+
+        public static string GetUserEmail(this IPrincipal principal)
+        {
+            var claimsIdentity = (ClaimsIdentity)principal.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.Email);
+            return claim.Value;
+        }
     }
 }
 

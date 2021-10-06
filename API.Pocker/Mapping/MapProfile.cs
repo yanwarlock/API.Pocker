@@ -24,13 +24,22 @@ namespace API.Pocker.Mapping
 
             CreateMap<UserHistoryRequest, UserProfileHistory>()
                 .ReverseMap();
+
             CreateMap<UserHistoryModel, UserProfileHistory>()
-                .ReverseMap();
+                    .ReverseMap();
+            CreateMap<UserProfileHistory, UserHistoryModel>()
+                .ForMember(x => x.UserName, src => src.MapFrom(x => x.UserProfile.Name));
+            CreateMap<UserHistoryModel, UserProfileHistory>()
+               .ForMember(x => x.UserProfile, src => src.MapFrom(x => x.UserName));
+
 
             CreateMap<UserProfileRequest, UserProfile>()
                 .ReverseMap();
+
             CreateMap<UserProfileModel, UserProfile>()
                 .ReverseMap();
+            CreateMap<UserProfile, UserProfileModel>()
+                .ForMember(x => x.Account, src => src.MapFrom(x => x.UserIdentity));
 
             CreateMap<VotesRequest, Votes>()
                 .ReverseMap();
