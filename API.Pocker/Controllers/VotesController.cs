@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using API.Pocker.Extensions;
 using API.Pocker.Hubs;
-using API.Pocker.Models;
 using API.Pocker.Models.User;
 using API.Pocker.Models.Votes;
 using API.Pocker.Services;

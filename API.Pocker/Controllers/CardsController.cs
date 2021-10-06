@@ -1,24 +1,18 @@
-﻿
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Pocker.Models;
+﻿using System.Threading.Tasks;
 using API.Pocker.Models.Cards;
 using API.Pocker.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using API.Pocker.Services.Interfaces;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Security.Principal;
-using System.Security.Claims;
-using API.Pocker.Extensions;
-using API.Pocker.Models.User;
 
 namespace API.Pocker.Controllers
 {
+    /// <summary>
+    /// Cards Controller
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -26,6 +20,11 @@ namespace API.Pocker.Controllers
     {
         private readonly ICardsService _cardsService;
         private readonly IUserHistoryService _userHistoryService;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cardsService"></param>
+        /// <param name="userHistoryService"></param>
        public CardsController(CardsService cardsService, UserHistoryService userHistoryService)
         {
             _cardsService = cardsService;
@@ -34,11 +33,10 @@ namespace API.Pocker.Controllers
 
 
         /// <summary>
-        /// Crea una new Cards
+        /// Create a new cards.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns>retorna una Cards</returns>
-
+        /// <param name="request">Cards to be created</param>
+        /// <returns>Returns the cards created</returns>
         [HttpPost("CreateCards")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -50,11 +48,6 @@ namespace API.Pocker.Controllers
                 if (request is null)
                     return BadRequest();
                 var result = await _cardsService.CreateAsync(request);
-                //var userHistory = await _userHistoryService.CreateAsync(new UserHistoryRequest
-                //{
-                //    Email = User.GetUserEmail(),
-                //    Description = $"Create Cards by Id: {result.Data.Id}"
-                //});
                 return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
             }
             catch (Exception ex)
@@ -63,7 +56,11 @@ namespace API.Pocker.Controllers
             } 
             
          }
-
+        /// <summary>
+        /// Get a given cards its identifier
+        /// </summary>
+        /// <param name="request">Cards indentifier</param>
+        /// <returns>Returns a cards</returns>
         [HttpGet("GetCards")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,14 +71,14 @@ namespace API.Pocker.Controllers
             {
                 return NotFound(result);
             }
-            //await _userHistoryService.CreateAsync(new UserHistoryRequest
-            //{
-            //    Email = User.GetUserEmail(),
-            //    Description = $"Get Cards by Id: {result.Data.Id}"
-            //});
             return Ok(result);
         }
 
+        /// <summary>
+        /// Delete a Cards
+        /// </summary>
+        /// <param name="request">Cards identifier</param>
+        /// <returns>Returns true or false</returns>
         [HttpDelete("DeleteCards")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -90,14 +87,13 @@ namespace API.Pocker.Controllers
             var result = await _cardsService.DeleteAsync(request);
             if (!result.Succeeded)
                 return NotFound(result);
-            //await _userHistoryService.CreateAsync(new UserHistoryRequest
-            //{
-            //    Email = User.GetUserEmail(),
-            //    Description = $"Delete Cards"
-            //});
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get all cards
+        /// </summary>
+        /// <returns>Returns a collection of cards</returns>
         [HttpGet("GetAllCards")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -106,12 +102,6 @@ namespace API.Pocker.Controllers
             var result = await _cardsService.GetAllAsync();
             if (result.Data is null)
                 return NotFound(result);
-
-            //await _userHistoryService.CreateAsync(new UserHistoryRequest
-            //{
-            //    Email = User.GetUserEmail(),
-            //    Description = $"Get All Cards"
-            //});
             return Ok(result);
         }
     }

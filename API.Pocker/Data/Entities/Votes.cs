@@ -15,6 +15,5 @@ namespace API.Pocker.Data.Entities
         {
             Id = GenerateBy.GenerateByUid();
         }
-
     }
 }

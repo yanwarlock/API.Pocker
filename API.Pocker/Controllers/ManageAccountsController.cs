@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using API.Pocker.Models;
 using API.Pocker.Models.ManageAccounts;
 using API.Pocker.Services.ManageAccounts;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using System.Net.Mime;
 
 namespace API.Pocker.Controllers

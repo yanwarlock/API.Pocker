@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using API.Pocker.Models;
 using API.Pocker.Models.User;
-using Microsoft.Extensions.DependencyInjection;
 using API.Pocker.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

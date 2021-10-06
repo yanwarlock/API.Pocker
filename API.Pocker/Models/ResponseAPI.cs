@@ -1,5 +1,4 @@
 ﻿
-
 namespace API.Pocker.Models
 {
     public class ResponseAPI<T>

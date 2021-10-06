@@ -9,10 +9,10 @@ namespace API.Pocker.Services.ManageAccounts
 {
    public interface IManageAccountService
     {
-        Task<ResponseAPI<AccountModel>> CreateAsync(CreateAccountRequest model);
-        Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest model);
+        Task<ResponseAPI<AccountModel>> CreateAsync(CreateAccountRequest request);
+        Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest request);
         Task<ResponseAPI<AccountModel>> GetAccountAsync(string id);
-        Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string model);
-        Task<ResponseAPI<IList<string>>> GetRolsAccountAsync(string model);
+        Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string request);
+        Task<ResponseAPI<IList<string>>> GetRolsAccountAsync(string request);
     }
 }

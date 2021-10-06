@@ -18,7 +18,6 @@ using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using API.Pocker.Data.Entities.ManagerUser;
 using Microsoft.Extensions.Configuration;
-using AutoMapper.QueryableExtensions;
 
 namespace API.Pocker.Services.ManageAccounts
 {
@@ -50,18 +49,18 @@ namespace API.Pocker.Services.ManageAccounts
             _jwtSettings = optionsJwt.Value;
         }
  
-        public async Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest model)
+        public async Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest request)
         {
             var erroApp = new IdentityErrorDescriberGlobal();
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByNameAsync(request.UserName);
             if (user is null)
                 return new ResponseAPI<AuthenticationModel>
                 {
                     Succeeded = false,
                     Message = $"User is incorrect",
-                    Errors = erroApp.InvalidUserName(model.UserName)
+                    Errors = erroApp.InvalidUserName(request.UserName)
                 };
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(request.UserName, request.Password, false, lockoutOnFailure: false);
             if (!result.Succeeded)
                 return new ResponseAPI<AuthenticationModel>
                 {
@@ -170,31 +169,31 @@ namespace API.Pocker.Services.ManageAccounts
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
 
-        public async Task<ResponseAPI<AccountModel>> CreateAsync(CreateAccountRequest model)
+        public async Task<ResponseAPI<AccountModel>> CreateAsync(CreateAccountRequest request)
         {
             var erroApp = new IdentityErrorDescriberGlobal();
 
-            var u = await _userManager.FindByEmailAsync(model.Email);
+            var u = await _userManager.FindByEmailAsync(request.Email);
             if (u != null)
                 return new ResponseAPI<AccountModel>()
                 {
                     Succeeded = false,
-                    Message = $"Email '{model.Email}' is already registered",
-                    Errors = erroApp.DuplicateEmail(model.Email).Description,
+                    Message = $"Email '{request.Email}' is already registered",
+                    Errors = erroApp.DuplicateEmail(request.Email).Description,
                 };
 
             var identityUser = new IdentityUser
             {
-                Email = model.Email,
-                UserName = model.UserName
+                Email = request.Email,
+                UserName = request.UserName
             };
-            var createIdentityUser = await _userManager.CreateAsync(identityUser, model.Password);
+            var createIdentityUser = await _userManager.CreateAsync(identityUser, request.Password);
 
             if (!createIdentityUser.Succeeded)
                 return new ResponseAPI<AccountModel>
                 {
                     Succeeded = false,
-                    Message = $"Unable to create the user '{model.UserName}'",
+                    Message = $"Unable to create the user '{request.UserName}'",
                 };
             var role = _configuration.GetValue<string>("DefaultRol");
 
@@ -205,7 +204,7 @@ namespace API.Pocker.Services.ManageAccounts
                 return new ResponseAPI<AccountModel>
                 {
                     Succeeded = false,
-                    Message = $"Unable to assign a role to the user:{model.UserName}",
+                    Message = $"Unable to assign a role to the user:{request.UserName}",
                 };
             }
             var result = _mapper.Map<AccountModel>(identityUser);
@@ -258,10 +257,10 @@ namespace API.Pocker.Services.ManageAccounts
             };
         }
 
-        public async Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string model)
+        public async Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string request)
         {
             var erroApp = new IdentityErrorDescriberGlobal();
-            var idUserToken = await _applicationDbContext.RefreshToken.Where(t => t.Value == model).FirstOrDefaultAsync();
+            var idUserToken = await _applicationDbContext.RefreshToken.Where(t => t.Value == request).FirstOrDefaultAsync();
             if (idUserToken is null)
             {
                 return new ResponseAPI<RefreshTokenModel>()
@@ -282,7 +281,6 @@ namespace API.Pocker.Services.ManageAccounts
                 Message = "RefreshToken Success",
             };
         }
-
         public Task<ResponseAPI<IList<string>>> GetRols(string id)
         {
             throw new NotImplementedException();

@@ -13,6 +13,6 @@ namespace API.Pocker.Services.Interfaces
         Task<ResponseAPI<UserProfileModel>> CreateAsync(UserProfileRequest request);
         Task<ResponseAPI> DeleteAsync(string id);
         Task<ResponseAPI<IList<UserProfileModel>>> GetAllAsync();
-        Task<ResponseAPI<UserProfileModel>> GetAsync(string request);
+        Task<ResponseAPI<UserProfileModel>> GetAsync(string id);
     }
 }
