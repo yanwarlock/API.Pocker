@@ -71,7 +71,7 @@ namespace API.Pocker.Services
                 return new ResponseAPI<CardsModel>()
                 {
                     Succeeded = false,
-                    Message = "Get Fail",
+                    Message = "Get fail cards not found",
                 };
             return new ResponseAPI<CardsModel>()
             {
