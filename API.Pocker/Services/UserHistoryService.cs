@@ -66,7 +66,7 @@ namespace API.Pocker.Services
             };
         }
 
-        public async Task<ResponseAPI<UserHistoryModel>> GetAsyn(string id)
+        public async Task<ResponseAPI<UserHistoryModel>> GetAsync(string id)
         {
             var result = await _dbContext.UserProfileHistorys.ProjectTo<UserHistoryModel>(_mapper.ConfigurationProvider)
                  .FirstOrDefaultAsync(c => c.Id == id);

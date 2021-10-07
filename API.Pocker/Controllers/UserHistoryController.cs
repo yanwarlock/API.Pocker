@@ -46,7 +46,7 @@ namespace API.Pocker.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Get(string request)
         {
-            var result = await _userHistoryService.GetAsyn(request);
+            var result = await _userHistoryService.GetAsync(request);
             if (result.Data is null)
                 return NotFound(result);
             return Ok(result);

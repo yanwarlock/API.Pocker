@@ -63,7 +63,7 @@ namespace API.Pocker.Services
             };
         }
 
-        public async Task<ResponseAPI<CardsModel>> GetAsyn(string id)
+        public async Task<ResponseAPI<CardsModel>> GetAsync(string id)
         {
             var result = await _dbContext.Cards.ProjectTo<CardsModel>(_mapper.ConfigurationProvider)
                  .FirstOrDefaultAsync(c => c.Id == id);

@@ -65,7 +65,7 @@ namespace API.Pocker.Controllers
             }
         }
        
-        [HttpPost("refresh_token")]
+        [HttpPost("RefreshToken")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -81,7 +81,7 @@ namespace API.Pocker.Controllers
                     return BadRequest(
                     new { StatusCodes.Status401Unauthorized, result.Errors });
 
-                return CreatedAtAction(nameof(Get), new { id = result.Data.AccessToken }, result);
+                return CreatedAtAction(nameof(Get), new { id = result.Data.Token }, result);
             }
             catch (Exception ex)
             {

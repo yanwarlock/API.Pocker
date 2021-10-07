@@ -66,7 +66,7 @@ namespace API.Pocker.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Get(string request)
         {
-            var result = await _cardsService.GetAsyn(request);
+            var result = await _cardsService.GetAsync(request);
             if (result.Data is null)
             {
                 return NotFound(result);

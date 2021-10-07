@@ -120,6 +120,21 @@ namespace API.Pocker
             services.AddControllersWithViews()
             .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Description = "Put only your JWT bearer on the textbox",
+                BearerFormat = "JWT",
+                Scheme = "bearer",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+
             services.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo
@@ -134,6 +149,17 @@ namespace API.Pocker
 
                     }
                 });
+                swaggerGenOptions.AddSecurityDefinition(
+                      jwtSecurityScheme.Reference.Id,
+                      jwtSecurityScheme
+                  );
+
+                swaggerGenOptions.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                            { jwtSecurityScheme, Array.Empty<string>() }
+                    }
+                );
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 swaggerGenOptions.IncludeXmlComments(xmlPath);

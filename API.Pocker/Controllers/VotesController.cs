@@ -117,20 +117,5 @@ namespace API.Pocker.Controllers
             });
             return Ok(result);
         }
-
-      /*  [HttpGet("notify-votes")]
-        [AllowAnonymous]
-        public async Task<IActionResult> NotifyVotes()
-        {
-            var hubContext = Request.HttpContext.RequestServices.GetService<IHubContext<VotesHub>>();
-            await hubContext.SendAllVotes(
-                //TODO: get all votes
-                new VotesModel[]
-                {
-                    new VotesModel { Id = Guid.NewGuid().ToString("D") }
-                }
-            );
-            return Ok();
-        }*/
     }
 }

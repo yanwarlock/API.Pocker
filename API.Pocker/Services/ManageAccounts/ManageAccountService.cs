@@ -51,7 +51,7 @@ namespace API.Pocker.Services.ManageAccounts
  
         public async Task<ResponseAPI<AuthenticationModel>> AuthenticateAsync(AuthenticationRequest request)
         {
-            var erroApp = new IdentityErrorDescriberGlobal();
+            var erroApp = new IdentityErrorDescriber();
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user is null)
                 return new ResponseAPI<AuthenticationModel>
@@ -90,7 +90,7 @@ namespace API.Pocker.Services.ManageAccounts
                 await _applicationDbContext.RefreshToken.AddAsync(new RefreshToken
                 {
                     AccountId = user.Id,
-                    Value = generateRefreshToken.AccessToken,
+                    Value = generateRefreshToken.Token,
                 });
                 await _applicationDbContext.SaveChangesAsync();
                 response.RefreshToken = generateRefreshToken;
@@ -104,7 +104,7 @@ namespace API.Pocker.Services.ManageAccounts
             response.Role = rolList.ToList();
             response.RefreshToken = new RefreshTokenModel
             { 
-                AccessToken = accountNewRefreshToken.Value,
+                Token = accountNewRefreshToken.Value,
             };
            
             return new ResponseAPI<AuthenticationModel>(response)
@@ -154,7 +154,7 @@ namespace API.Pocker.Services.ManageAccounts
             var token = RandomTokenString();
             var resul = new RefreshTokenModel
             {
-                AccessToken = token,
+                Token = token,
             };
 
             return resul;
@@ -171,7 +171,7 @@ namespace API.Pocker.Services.ManageAccounts
 
         public async Task<ResponseAPI<AccountModel>> CreateAsync(CreateAccountRequest request)
         {
-            var erroApp = new IdentityErrorDescriberGlobal();
+            var erroApp = new IdentityErrorDescriber();
 
             var u = await _userManager.FindByEmailAsync(request.Email);
             if (u != null)
@@ -259,7 +259,7 @@ namespace API.Pocker.Services.ManageAccounts
 
         public async Task<ResponseAPI<RefreshTokenModel>> RefreshToken(string request)
         {
-            var erroApp = new IdentityErrorDescriberGlobal();
+            var erroApp = new IdentityErrorDescriber();
             var idUserToken = await _applicationDbContext.RefreshToken.Where(t => t.Value == request).FirstOrDefaultAsync();
             if (idUserToken is null)
             {
@@ -273,7 +273,7 @@ namespace API.Pocker.Services.ManageAccounts
             var jwtSecurityToken = await GenerateJWToken(user).ConfigureAwait(false);
             var result = new RefreshTokenModel
             {
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
             };
             return new ResponseAPI<RefreshTokenModel>(result)
             {
