@@ -15,7 +15,7 @@ namespace API.Pocker.Support
     {
         private readonly AmqpSettings amqpInfo;
         private readonly ConnectionFactory connectionFactory;
-        private const string QueueName = "VotesQueue";
+        private const string QueueName = "AllVotes";
 
         private IModel _rabbitClient;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
