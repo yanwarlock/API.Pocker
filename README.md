@@ -20,4 +20,6 @@ A little intro about the installation.
 ```
 gh repo clone yanwarlock/API.Pocker
 ```
+-See the "Admin" section in the appsettings.json to get the credentials.
+
 
